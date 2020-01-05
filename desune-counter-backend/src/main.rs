@@ -31,7 +31,7 @@ struct CounterResponse {
 
 #[get("/api/count")]
 async fn count(data: web::Data<CounterApp>) -> impl Responder {
-    if Duration::from_secs(15) <= (Instant::now() - data.last_time.get()) {
+    if Duration::from_secs(1) <= (Instant::now() - data.last_time.get()) {
         if let Some((is_active, count_num)) = get_counter(&data.client).await {
             data.count.set(count_num);
             data.is_active.set(is_active);
