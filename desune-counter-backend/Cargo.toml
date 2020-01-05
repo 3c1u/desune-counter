@@ -8,3 +8,5 @@ edition = "2018"
 actix-web = "2.0.0"
 actix-rt = "1.0.0"
 serde = { version = "1.0.104", features = ["derive"] }
+tokio-postgres = "0.5.1"
+tokio = "0.2.6"

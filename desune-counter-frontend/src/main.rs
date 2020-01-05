@@ -28,7 +28,8 @@ struct Model {
 
 #[derive(Clone, Serialize, Deserialize)]
 struct CountResponse {
-    count: u64,
+    pub(crate) count: u64,
+    pub(crate) is_active: bool,
 }
 
 enum Msg {
@@ -96,7 +97,7 @@ impl Component for Model {
                 true
             }
             Msg::Update(response) => {
-                self.not_ready = false;
+                self.not_ready = !response.is_active;
                 self.count = response.count;
 
                 true
