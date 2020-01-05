@@ -1,2 +1,3 @@
 [workspace]
 members = ["desune-counter-frontend", "desune-counter-backend"]
+default-members = ["desune-counter-backend"]

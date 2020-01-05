@@ -23,7 +23,7 @@ struct Model {
     fetch: FetchService,
     _interval: IntervalService,
     _fetcher: Box<dyn Task>,
-    fetch_reqeust: Option<Box<dyn Task>>,
+    fetch_reqeust: Box<dyn Task>,
 }
 
 #[derive(Clone, Serialize, Deserialize)]
@@ -46,14 +46,25 @@ impl Component for Model {
         let mut interval = IntervalService::new();
         let task = interval.spawn(Duration::from_secs(2), link.callback(|_| Msg::Fetch));
 
+        let mut fetch = FetchService::new();
+        let fetch_reqeust = fetch.fetch(Request::get("/api/count").body(Nothing).unwrap(),
+            link.callback(|response: Response<Json<Result<CountResponse, failure::Error>>>| {
+                if let Json(Ok(response)) = response.into_body() {
+                    Msg::Update(response)
+                } else {
+                    Msg::DoNothing
+                }
+            })
+        );
+
         Model {
             link,
             count: 0,
             not_ready: true,
-            fetch: FetchService::new(),
+            fetch,
             _interval: interval,
             _fetcher: Box::new(task),
-            fetch_reqeust: None,
+            fetch_reqeust: Box::new(fetch_reqeust),
         }
     }
 
@@ -74,7 +85,7 @@ impl Component for Model {
                     })
                 );
 
-                self.fetch_reqeust = Some(Box::new(fetch));
+                self.fetch_reqeust = Box::new(fetch);
 
                 true
             },
@@ -95,7 +106,7 @@ impl Component for Model {
                     })
                 );
 
-                self.fetch_reqeust = Some(Box::new(fetch));
+                self.fetch_reqeust = Box::new(fetch);
 
                 true
             }
