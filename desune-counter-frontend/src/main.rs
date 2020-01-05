@@ -7,12 +7,12 @@
 
 #![warn(clippy::all)]
 
-use yew::{html, Component, ComponentLink, Html, ShouldRender};
-use yew::services::{IntervalService, FetchService, Task};
-use yew::services::fetch::{Request, Response};
 use yew::format::{Json, Nothing};
+use yew::services::fetch::{Request, Response};
+use yew::services::{FetchService, IntervalService, Task};
+use yew::{html, Component, ComponentLink, Html, ShouldRender};
 
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 use std::time::Duration;
 
@@ -47,14 +47,17 @@ impl Component for Model {
         let task = interval.spawn(Duration::from_secs(2), link.callback(|_| Msg::Fetch));
 
         let mut fetch = FetchService::new();
-        let fetch_reqeust = fetch.fetch(Request::get("/api/count").body(Nothing).unwrap(),
-            link.callback(|response: Response<Json<Result<CountResponse, failure::Error>>>| {
-                if let Json(Ok(response)) = response.into_body() {
-                    Msg::Update(response)
-                } else {
-                    Msg::DoNothing
-                }
-            })
+        let fetch_reqeust = fetch.fetch(
+            Request::get("/api/count").body(Nothing).unwrap(),
+            link.callback(
+                |response: Response<Json<Result<CountResponse, failure::Error>>>| {
+                    if let Json(Ok(response)) = response.into_body() {
+                        Msg::Update(response)
+                    } else {
+                        Msg::DoNothing
+                    }
+                },
+            ),
         );
 
         Model {
@@ -75,20 +78,23 @@ impl Component for Model {
                 self.not_ready = true;
 
                 // ですねぇリクエストをサーバーに送りつける
-                let fetch = self.fetch.fetch(Request::get("/api/increment").body(Nothing).unwrap(),
-                    self.link.callback(|response: Response<Json<Result<CountResponse, failure::Error>>>| {
-                        if let Json(Ok(response)) = response.into_body() {
-                            Msg::Update(response)
-                        } else {
-                            Msg::DoNothing
-                        }
-                    })
+                let fetch = self.fetch.fetch(
+                    Request::get("/api/increment").body(Nothing).unwrap(),
+                    self.link.callback(
+                        |response: Response<Json<Result<CountResponse, failure::Error>>>| {
+                            if let Json(Ok(response)) = response.into_body() {
+                                Msg::Update(response)
+                            } else {
+                                Msg::DoNothing
+                            }
+                        },
+                    ),
                 );
 
                 self.fetch_reqeust = Box::new(fetch);
 
                 true
-            },
+            }
             Msg::Update(response) => {
                 self.not_ready = false;
                 self.count = response.count;
@@ -96,14 +102,17 @@ impl Component for Model {
                 true
             }
             Msg::Fetch => {
-                let fetch = self.fetch.fetch(Request::get("/api/count").body(Nothing).unwrap(),
-                    self.link.callback(|response: Response<Json<Result<CountResponse, failure::Error>>>| {
-                        if let Json(Ok(response)) = response.into_body() {
-                            Msg::Update(response)
-                        } else {
-                            Msg::DoNothing
-                        }
-                    })
+                let fetch = self.fetch.fetch(
+                    Request::get("/api/count").body(Nothing).unwrap(),
+                    self.link.callback(
+                        |response: Response<Json<Result<CountResponse, failure::Error>>>| {
+                            if let Json(Ok(response)) = response.into_body() {
+                                Msg::Update(response)
+                            } else {
+                                Msg::DoNothing
+                            }
+                        },
+                    ),
                 );
 
                 self.fetch_reqeust = Box::new(fetch);
