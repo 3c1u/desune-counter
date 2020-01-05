@@ -1,0 +1,10 @@
+[package]
+name = "desune-counter-frontend"
+version = "0.1.0"
+authors = ["3c1u (Hikaru Terazono) <3c1u@vulpesgames.tokyo>"]
+edition = "2018"
+
+[dependencies]
+yew = { git = "https://github.com/yewstack/yew" }
+serde = { version = "1.0.104", features = ["derive"] }
+failure = "0.1.6"
