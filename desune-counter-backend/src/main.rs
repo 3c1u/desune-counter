@@ -110,12 +110,12 @@ async fn init_database() -> Client {
 }
 
 async fn increment_desune(client: &Client) ->  Option<(bool, u64)> {
-    client.execute(r#"UPDATE desune_counter SET count = count+1, time = clock_timestamp() WHERE clock_timestamp() - time >= '00:00:10'"#, &[]).await.ok()?;
+    client.execute(r#"UPDATE desune_counter SET count = count+1, time = clock_timestamp() WHERE clock_timestamp() - time >= '00:00:05'"#, &[]).await.ok()?;
     get_counter(client).await
 }
 
 async fn get_counter(client: &Client) -> Option<(bool, u64)> {
-    let res = client.query(r#"SELECT clock_timestamp() - time >= '00:00:10', count FROM desune_counter"#, &[]).await.ok()?;
+    let res = client.query(r#"SELECT clock_timestamp() - time >= '00:00:05', count FROM desune_counter"#, &[]).await.ok()?;
     
     if res.len() == 1 {
         let (flag, count_num): (bool, i64) = (res[0].get(0), res[0].get(1));
