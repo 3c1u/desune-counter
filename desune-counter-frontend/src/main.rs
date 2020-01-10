@@ -45,7 +45,7 @@ impl Component for Model {
 
     fn create(_: Self::Properties, link: ComponentLink<Self>) -> Self {
         let mut interval = IntervalService::new();
-        let task = interval.spawn(Duration::from_secs(3), link.callback(|_| Msg::Fetch));
+        let task = interval.spawn(Duration::from_secs(1), link.callback(|_| Msg::Fetch));
 
         let mut fetch = FetchService::new();
         let fetch_reqeust = fetch.fetch(

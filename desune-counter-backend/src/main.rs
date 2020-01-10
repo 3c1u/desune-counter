@@ -31,7 +31,7 @@ struct CounterResponse {
 
 #[get("/api/count")]
 async fn count(data: web::Data<CounterApp>) -> impl Responder {
-    if Duration::from_secs(1) <= (Instant::now() - data.last_time.get()) {
+    if Duration::from_millis(100) <= (Instant::now() - data.last_time.get()) {
         if let Some((is_active, count_num)) = get_counter(&data.client).await {
             data.count.set(count_num);
             data.is_active.set(is_active);
@@ -110,12 +110,12 @@ async fn init_database() -> Client {
 }
 
 async fn increment_desune(client: &Client) ->  Option<(bool, u64)> {
-    client.execute(r#"UPDATE desune_counter SET count = count+1, time = clock_timestamp() WHERE clock_timestamp() - time >= '00:00:05'"#, &[]).await.ok()?;
+    client.execute(r#"UPDATE desune_counter SET count = count+1, time = clock_timestamp() WHERE clock_timestamp() - time >= '00:00:03'"#, &[]).await.ok()?;
     get_counter(client).await
 }
 
 async fn get_counter(client: &Client) -> Option<(bool, u64)> {
-    let res = client.query(r#"SELECT clock_timestamp() - time >= '00:00:05', count FROM desune_counter"#, &[]).await.ok()?;
+    let res = client.query(r#"SELECT clock_timestamp() - time >= '00:00:03', count FROM desune_counter"#, &[]).await.ok()?;
     
     if res.len() == 1 {
         let (flag, count_num): (bool, i64) = (res[0].get(0), res[0].get(1));
